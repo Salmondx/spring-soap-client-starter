@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':autoconfigure')
+    compile project(':starter')
 
     compile 'org.springframework.boot:spring-boot-starter'
     compile 'org.apache.commons:commons-lang3'

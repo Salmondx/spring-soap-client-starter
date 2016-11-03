@@ -5,8 +5,8 @@ buildscript {
     dependencies {
         classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.5.8.RELEASE'
         classpath 'io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE'
-        classpath 'com.github.jruby-gradle:jruby-gradle-plugin:1.2.0'
         classpath 'com.netflix.nebula:nebula-publishing-plugin:4.8.1'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.2'
         classpath 'no.nils:wsdl2java:0.10'
     }
 }
@@ -14,20 +14,16 @@ buildscript {
 plugins {
     id 'base'
     id 'maven-publish'
-    id 'com.jfrog.artifactory' version '4.1.1'
     id 'nebula.optional-base' version '3.1.0'
     id 'nebula.provided-base' version '3.1.0'
     id 'nebula.info' version '3.1.0'
 }
-
-version = "0.0.1"
 
 ext {
     springBootVersion = '1.5.8.RELEASE'
     integrationTestRun = false
     generatedDocumentation = file('build/generated-snippets')
     javaProjects = [
-            project(':autoconfigure'),
             project(':starter'),
             project(':examples'),
     ]
@@ -38,7 +34,7 @@ task wrapper(type: Wrapper) {
 }
 
 allprojects {
-    version = version
+    version = '0.0.1'
     group = 'com.salmondx.cxf.client'
 
     apply plugin: 'idea'
@@ -138,9 +134,3 @@ project(':examples') {
         }
     }
 }
-
-
-def extractRepo(String versionNumber) {
-    versionNumber.contains('-dev') || versionNumber.contains('SNAPSHOT') ? 'snapshots' : 'releases'
-}
-

@@ -1,12 +1,39 @@
-dependencies {
-    compile project(':autoconfigure')
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
-    compile 'org.springframework.boot:spring-boot-starter'
-    compile 'org.apache.commons:commons-lang3'
+dependencies {
+    provided 'org.springframework.boot:spring-boot-starter'
+    provided 'org.apache.commons:commons-lang3'
+    provided 'com.netflix.hystrix:hystrix-core:1.5.13'
 
     compile 'org.apache.cxf:cxf-core', optional
     compile 'org.apache.cxf:cxf-rt-frontend-jaxws', optional
     compile 'org.apache.cxf:cxf-rt-transports-http', optional
     compile 'org.apache.cxf:cxf-rt-ws-security', optional
     compile 'org.apache.cxf:cxf-rt-bindings-soap', optional
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    publications = ['mavenJava']
+    publish = true
+    pkg {
+        repo = 'maven'
+        name = 'starter'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/Salmondx/spring-soap-client-starter.git'
+    }
 }

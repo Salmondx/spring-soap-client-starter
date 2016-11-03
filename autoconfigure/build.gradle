@@ -1,5 +1,0 @@
-dependencies {
-    provided 'org.springframework.boot:spring-boot-starter'
-    provided 'org.apache.commons:commons-lang3'
-    provided 'com.netflix.hystrix:hystrix-core:1.5.13'
-}

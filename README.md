@@ -1,4 +1,4 @@
-# Declarative SOAP client for Apache CXF (with Spring Boot starter)
+# Declarative SOAP client for Apache CXF (Spring Boot starter)
 ## About
 This library adds's Feign/Retrofit like support for CXF web services clients. With several annotations, you can create fully functional web service client
 with hystrix support and custom request/response serialization.
@@ -7,7 +7,7 @@ with hystrix support and custom request/response serialization.
 Add several dependencies to your `build.gradle` file:
 ```groovy
 dependencies {
-    
+    compile 'com.salmondx.cxf.client:starter:0.0.1'
 }
 ```
 
@@ -64,7 +64,7 @@ In the `@SoapClient` annotation you should provide CXF class for Soap web servic
 
 `@SoapMethod` annotation points to Soap service method's name, that could be obtained from WSDL or from service from `*PortType` (both full and short names are supported: `CustomerAccountsInfoGet` and `/CustomerAccountsInfo#Get` -> `Get`).
 
-###Type conversion
+### Type conversion
 
 As you know, SOAP services use deprecated and ugly types (e.g. XMLGregorianCalendar) and it is not the best idea to build an API upon this types. 
 
@@ -151,7 +151,7 @@ HystrixCommand<List<ResponseTest>> ...
 Single<List<ResponseTest>> ...
 ```
 
-##### Single item
+#### Single item
 ```java
 @Data
 @Response("outParms")
@@ -185,9 +185,9 @@ public class NecessaryParams {
 }
 ```
 
-NOTE: Property `total` will be converted from `BigDecimal` type to `Long` during deserialization because of the type mismatch and the Spring's ConversionService (see [paragraph](#Type conversion))
+NOTE: Property `total` will be converted from `BigDecimal` type to `Long` during deserialization because of the type mismatch and the Spring's ConversionService (see [paragraph](#Type conversion) )
 
-##### Nested list items
+#### Nested list items
 To deserialize nested list items, just point `@Response` to the last property from actual response object:
 
 ```java

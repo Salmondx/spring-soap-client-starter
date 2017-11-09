@@ -1,0 +1,12 @@
+dependencies {
+    compile project(':autoconfigure')
+
+    compile 'org.springframework.boot:spring-boot-starter'
+    compile 'org.apache.commons:commons-lang3'
+
+    compile 'org.apache.cxf:cxf-core', optional
+    compile 'org.apache.cxf:cxf-rt-frontend-jaxws', optional
+    compile 'org.apache.cxf:cxf-rt-transports-http', optional
+    compile 'org.apache.cxf:cxf-rt-ws-security', optional
+    compile 'org.apache.cxf:cxf-rt-bindings-soap', optional
+}

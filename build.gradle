@@ -1,0 +1,146 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.5.8.RELEASE'
+        classpath 'io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE'
+        classpath 'com.github.jruby-gradle:jruby-gradle-plugin:1.2.0'
+        classpath 'com.netflix.nebula:nebula-publishing-plugin:4.8.1'
+        classpath 'no.nils:wsdl2java:0.10'
+    }
+}
+
+plugins {
+    id 'base'
+    id 'maven-publish'
+    id 'com.jfrog.artifactory' version '4.1.1'
+    id 'nebula.optional-base' version '3.1.0'
+    id 'nebula.provided-base' version '3.1.0'
+    id 'nebula.info' version '3.1.0'
+}
+
+version = "0.0.1"
+
+ext {
+    springBootVersion = '1.5.8.RELEASE'
+    integrationTestRun = false
+    generatedDocumentation = file('build/generated-snippets')
+    javaProjects = [
+            project(':autoconfigure'),
+            project(':starter'),
+            project(':examples'),
+    ]
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.9'
+}
+
+allprojects {
+    version = version
+    group = 'com.salmondx.cxf.client'
+
+    apply plugin: 'idea'
+    apply plugin: 'maven-publish'
+    // apply plugin: 'nebula.nebula-release'
+    apply plugin: 'nebula.maven-base-publish'
+
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
+    apply plugin: 'idea'
+    apply plugin: 'nebula.info'
+    apply plugin: 'io.spring.dependency-management'
+
+    dependencyManagement {
+        dependencies {
+            dependencySet(group: 'org.springframework.boot', version: springBootVersion) {
+                entry 'spring-boot-starter-test'
+            }
+
+            dependency "org.springframework.boot:spring-boot-starter:$springBootVersion"
+
+            dependency 'ch.qos.logback:logback-classic:1.1.7'
+            dependency 'org.projectlombok:lombok:1.16.8'
+            dependency 'org.codehaus.groovy:groovy-all:2.4.7'
+            dependency 'org.apache.commons:commons-lang3:3.0'
+            dependency 'com.netflix.hystrix:hystrix-core:1.5.13'
+
+
+            dependencySet(group: 'org.apache.cxf', version: '3.1.0') {
+                entry 'cxf-core'
+                entry 'cxf-rt-frontend-jaxws'
+                entry 'cxf-rt-transports-http'
+                entry 'cxf-rt-ws-security'
+                entry 'cxf-rt-bindings-soap'
+            }
+
+            dependency 'org.spockframework:spock-core:1.1-groovy-2.4-rc-1'
+            dependency 'org.spockframework:spock-spring:1.1-groovy-2.4-rc-1'
+
+            dependency 'commons-beanutils:commons-beanutils:1.9.2'
+        }
+    }
+
+    task resolveAllDependencies {
+        doLast {
+            configurations.all { it.resolve() }
+        }
+    }
+}
+
+configure(javaProjects) {
+    apply plugin: 'java'
+    apply plugin: 'groovy'
+
+    apply plugin: 'nebula.provided-base'
+    apply plugin: 'nebula.optional-base'
+    apply plugin: 'nebula.source-jar'
+    apply plugin: 'nebula.maven-publish'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    dependencies {
+        provided 'org.projectlombok:lombok'
+
+        testCompile 'org.codehaus.groovy:groovy-all'
+        testCompile 'org.spockframework:spock-core'
+        testCompile 'org.spockframework:spock-spring'
+        testCompile 'org.springframework.boot:spring-boot-starter-test'
+        testCompile 'org.unitils:unitils-core:3.4.2'
+    }
+}
+
+project(':examples') {
+    apply plugin: 'no.nils.wsdl2java'
+
+    wsdl2java{
+        generatedWsdlDir = file("$projectDir/generated-sources")
+        wsdlDir = file("$projectDir/src/main/resources/wsdl/")
+        wsdlsToGenerate = [
+                ["$projectDir/src/main/resources/wsdl/AccountsInfo.wsdl"]
+        ]
+    }
+
+    wsdl2javaExt {
+        cxfVersion = "3.1.0"
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDir "generated-sources/"
+            }
+        }
+    }
+}
+
+
+def extractRepo(String versionNumber) {
+    versionNumber.contains('-dev') || versionNumber.contains('SNAPSHOT') ? 'snapshots' : 'releases'
+}
+

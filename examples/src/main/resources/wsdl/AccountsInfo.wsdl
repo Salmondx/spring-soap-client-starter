@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://schemas.xmlsoap.org/wsdl/soap/"
+        name="AccountInfo"
+        targetNamespace="http://AccountInfo"
+        xmlns:tns="http://AccountInfo">
+
+
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://AccountInfo">
+
+            <xsd:complexType name="AccountInfoGetInParms">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="accNumber" type="xsd:string"/>
+                    <xsd:element minOccurs="0" name="date" type="xsd:date"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="AccountInfoListInParms">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="currency" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="AccountInfoGetOutParms">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="accNumber" type="xsd:string"/>
+                    <xsd:element minOccurs="0" name="balance" type="xsd:decimal"/>
+                    <xsd:element minOccurs="0" name="currencyUnit" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="BankInfo">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="bankCode" type="xsd:string"/>
+                    <xsd:element minOccurs="0" name="accountNumber" type="xsd:string"/>
+                    <xsd:element minOccurs="0" name="swift" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="AccountInfoRow">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="accNumber" type="xsd:string"/>
+                    <xsd:element minOccurs="0" name="balance" type="xsd:decimal"/>
+                    <xsd:element minOccurs="0" name="currencyUnit" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="ResultSet">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="resultSetRow" type="tns:AccountInfoRow"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:element name="NotFoundException">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="errorCode" type="xsd:string"/>
+                        <xsd:element name="errorString" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="AccountInfoGetInParms" type="tns:AccountInfoGetInParms"/>
+            <xsd:element name="BankInfo" type="tns:BankInfo"/>
+            <xsd:element name="AccountInfoGetResponse" type="tns:AccountInfoGetOutParms"/>
+            <xsd:element name="AccountInfoListInParms" type="tns:AccountInfoListInParms"/>
+            <xsd:element name="AccountInfoList" type="tns:ResultSet"/>
+        </xsd:schema>
+    </wsdl:types>
+
+    <!-- Web service messages -->
+    <wsdl:message name="msgAccountInfoGet">
+        <wsdl:part element="tns:BankInfo" name="BankInfo"/>
+        <wsdl:part element="tns:AccountInfoGetInParms" name="AccountInfoGetInParms"/>
+    </wsdl:message>
+    <wsdl:message name="msgAccountInfoGetResponse">
+        <wsdl:part element="tns:AccountInfoGetResponse" name="AccountInfoGetResponse"/>
+    </wsdl:message>
+
+    <wsdl:message name="msgNotFoundException">
+        <wsdl:part element="tns:NotFoundException" name="NotFoundException"/>
+    </wsdl:message>
+
+    <wsdl:message name="msgAccountInfoList">
+        <wsdl:part element="tns:BankInfo" name="BankInfo"/>
+        <wsdl:part element="tns:AccountInfoListInParms" name="AccountInfoListInParms"/>
+    </wsdl:message>
+
+    <wsdl:message name="msgAccountInfoListResponse">
+        <wsdl:part name="AccountInfoList" element="tns:AccountInfoList"/>
+    </wsdl:message>
+
+    <wsdl:portType name="AccountInfoPortType">
+        <wsdl:operation name="AccountInfoGet">
+            <wsdl:input message="tns:msgAccountInfoGet"/>
+            <wsdl:output message="tns:msgAccountInfoGetResponse"/>
+            <wsdl:fault message="tns:msgNotFoundException" name="NotFoundException"/>
+        </wsdl:operation>
+        <wsdl:operation name="AccountInfoList">
+            <wsdl:input message="tns:msgAccountInfoList"/>
+            <wsdl:output message="tns:msgAccountInfoListResponse"/>
+            <wsdl:fault message="tns:msgNotFoundException" name="NotFoundException"/>
+        </wsdl:operation>
+
+    </wsdl:portType>
+
+    <wsdl:binding name="AccountInfoBinding" type="tns:AccountInfoPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="AccountInfoGet">
+            <soap:operation soapAction="/AccountInfo#Get"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="NotFoundException">
+                <soap:fault name="NotFoundException" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="AccountInfoList">
+            <soap:operation soapAction="/AccountInfoList#Get"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="NotFoundException">
+                <soap:fault name="NotFoundException" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:service name="AccountInfoService">
+        <wsdl:port binding="tns:AccountInfoBinding" name="AccountInfoPort">
+            <soap:address location="http://localhost:9080/AccountInfo"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

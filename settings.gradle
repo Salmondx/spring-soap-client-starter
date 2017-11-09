@@ -1,0 +1,5 @@
+rootProject.name = "soap-client"
+
+include 'autoconfigure'
+include 'starter'
+include 'examples'

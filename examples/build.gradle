@@ -1,0 +1,16 @@
+dependencies {
+    compile project(':autoconfigure')
+
+    compile 'org.springframework.boot:spring-boot-starter'
+    compile 'org.apache.commons:commons-lang3'
+    compile 'ch.qos.logback:logback-classic:1.1.7'
+    compile 'org.projectlombok:lombok:1.16.8'
+    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+
+    compile "org.apache.cxf:cxf-core"
+    compile "org.apache.cxf:cxf-rt-frontend-jaxws"
+    compile "org.apache.cxf:cxf-rt-transports-http"
+    compile "org.apache.cxf:cxf-rt-ws-security"
+    compile "org.apache.cxf:cxf-rt-bindings-soap"
+
+}

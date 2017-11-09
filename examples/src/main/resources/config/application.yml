@@ -1,0 +1,11 @@
+spring.profiles.active: development
+management.contextPath: /admin
+
+spring.application.name: soap-feign
+
+hystrix.threadpool.default.coreSize: 50
+hystrix.threadpool.default.maxQueueSize: 10
+hystrix.threadpool.default.queueSizeRejectionThreshold: 10
+
+hystrix:
+  command.default.execution.isolation.thread.timeoutInMilliseconds: 10000

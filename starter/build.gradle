@@ -3,14 +3,14 @@ apply plugin: 'com.jfrog.bintray'
 
 dependencies {
     provided 'org.springframework.boot:spring-boot-starter'
-    provided 'org.apache.commons:commons-lang3'
-    provided 'com.netflix.hystrix:hystrix-core:1.5.13'
+    compile 'org.apache.commons:commons-lang3'
+    compile 'com.netflix.hystrix:hystrix-core:1.5.13'
 
-    compile 'org.apache.cxf:cxf-core', optional
-    compile 'org.apache.cxf:cxf-rt-frontend-jaxws', optional
-    compile 'org.apache.cxf:cxf-rt-transports-http', optional
-    compile 'org.apache.cxf:cxf-rt-ws-security', optional
-    compile 'org.apache.cxf:cxf-rt-bindings-soap', optional
+    provided 'org.apache.cxf:cxf-core', optional
+    provided 'org.apache.cxf:cxf-rt-frontend-jaxws', optional
+    provided 'org.apache.cxf:cxf-rt-transports-http', optional
+    provided 'org.apache.cxf:cxf-rt-ws-security', optional
+    provided 'org.apache.cxf:cxf-rt-bindings-soap', optional
 }
 
 publishing {

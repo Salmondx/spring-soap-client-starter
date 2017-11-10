@@ -143,11 +143,52 @@ class SoapClientTest extends Specification {
         reset(mockService)
     }
 
+    def "it should pass parameters from cxf service as is"() {
+        given:
+        def date = LocalDate.now()
+        def soapIn = getSoapIn(accountNumber, date)
+        def soapOut = getSoapOut(accountNumber)
+        when(mockService.accountInfoGet(eq(bankInfo), refEq(soapIn))).thenReturn(soapOut)
+        when:
+        def resp = testClient.getAsIs(soapIn, bankInfo)
+        then:
+        resp.balance == soapOut.balance
+        resp.currencyUnit == soapOut.currencyUnit
+        resp.accNumber == soapOut.accNumber
+    }
+
+    def "it should autowire and pass rest parameters from cxf service as is"() {
+        given:
+        def date = LocalDate.now()
+        def soapIn = getSoapIn(accountNumber, date)
+        def soapOut = getSoapOut(accountNumber)
+        when(mockService.accountInfoGet(eq(bankInfo), refEq(soapIn))).thenReturn(soapOut)
+        when:
+        def resp = testClient.getAsIsWithAutowired(soapIn)
+        then:
+        resp.balance == soapOut.balance
+        resp.currencyUnit == soapOut.currencyUnit
+        resp.accNumber == soapOut.accNumber
+    }
+
+    def "it should pass parameters as is and work with async"() {
+        given:
+        def date = LocalDate.now()
+        def soapIn = getSoapIn(accountNumber, date)
+        def soapOut = getSoapOut(accountNumber)
+        when(mockService.accountInfoGet(eq(bankInfo), refEq(soapIn))).thenReturn(soapOut)
+        when:
+        def resp = testClient.getAsIsAsync(soapIn).toBlocking().first()
+        then:
+        resp.balance == soapOut.balance
+        resp.currencyUnit == soapOut.currencyUnit
+        resp.accNumber == soapOut.accNumber
+    }
+
     def "it should throw HystrixRuntimeException if exception occurred"() {
         given:
         def date = LocalDate.now()
         def soapIn = getSoapIn(accountNumber, date)
-        def soapResponse = getSoapOut(accountNumber)
         when(mockService.accountInfoGet(eq(bankInfo), refEq(soapIn))).thenThrow(new MsgNotFoundException())
         when:
         testClient.getInfo(new AccountRequest(accountNumber, date)).toBlocking().first()

@@ -8,6 +8,10 @@ import java.lang.annotation.Target;
 /**
  * Created by Salmondx on 05/09/16.
  */
+
+/**
+ * Points to original request field
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Field {

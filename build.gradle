@@ -34,7 +34,7 @@ task wrapper(type: Wrapper) {
 }
 
 allprojects {
-    version = '0.0.1'
+    version = '0.0.2'
     group = 'com.salmondx.cxf.client'
 
     apply plugin: 'idea'

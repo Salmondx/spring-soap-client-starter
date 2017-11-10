@@ -58,14 +58,14 @@ class RequestMetadataTest extends Specification {
         result instanceof RequestMetadata
     }
 
-    def "it should thrown Exception because no underlying class found"() {
+    def "it should create PlainRequestMetadata"() {
         given:
         RequestMetadataFactory requestMetadataFactory = new RequestMetadataFactory.Default(typeConverter)
         def methodWithPlainObjects = TestInterface.getMethod("plainObject", String)
         when:
         def result = requestMetadataFactory.create(methodWithPlainObjects.getParameterTypes(), methodWithPlainObjects, null)
         then:
-        thrown(IllegalArgumentException)
+        result instanceof RequestMetadata
     }
 
     def typeConverter = new TypeConverter() {

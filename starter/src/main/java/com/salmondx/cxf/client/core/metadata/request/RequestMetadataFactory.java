@@ -54,23 +54,45 @@ public abstract class RequestMetadataFactory {
             Parameter[] proxyInputParameters = proxyMethod.getParameters();
 
             List<RequestWrapper> requestWrappers = new LinkedList<>();
+
+            // if all types are equal -> pass them as-is without mapping
+            if (isTypesEquals(parameterTypes, proxyInputParameters)) {
+                for (Class<?> parameterType : parameterTypes) {
+                    for (int i = 0; i < proxyInputParameters.length; i++) {
+                        if (parameterType == proxyInputParameters[i].getType()) {
+                            requestWrappers.add(new PrimitiveRequestWrapper(i));
+                        }
+                    }
+                }
+                return new RequestMetadata(requestWrappers);
+            }
+
             for (Class<?> parameterType : parameterTypes) {
                 if (autowiredFieldsClasses.containsKey(parameterType)) {
                     requestWrappers.add(new AutowiredRequestWrapper(
                             autowiredFieldsClasses.get(parameterType)
                     ));
                 } else {
-                    if (isPrimitiveTypes(proxyInputParameters)) {
+                    // if type is equal, pass it as is without mapping
+                    if (isTypeEquals(parameterType, proxyInputParameters)) {
+                        for (int i = 0; i < proxyInputParameters.length; i++) {
+                            if (parameterType == proxyInputParameters[i].getType()) {
+                                requestWrappers.add(new PrimitiveRequestWrapper(i));
+                            }
+                        }
+                    } else if (isPrimitiveTypes(proxyInputParameters)) {
                         for (int i = 0; i < proxyInputParameters.length; i++) {
                             requestWrappers.add(
                                     new PrimitiveRequestWrapper(i)
                             );
                         }
                     } else if (isCustomObject(proxyInputParameters)) {
+                        // if type is custom object -> construct serialization wrapper
                         requestWrappers.add(
                                 createForCustomObject(proxyMethod.getParameterTypes()[0], parameterType, converter)
                         );
                     } else {
+                        // if parameters passed as is -> construct a soap request object from them
                         requestWrappers.add(
                                 createForPlainObjects(parameterType, proxyInputParameters)
                         );
@@ -89,6 +111,24 @@ public abstract class RequestMetadataFactory {
             return false;
         }
 
+        private boolean isTypesEquals(Class<?>[] parameterTypes, Parameter[] proxyInputParameters) {
+            for (Class<?> parameterType : parameterTypes) {
+                if (!isTypeEquals(parameterType, proxyInputParameters)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private boolean isTypeEquals(Class<?> parameterType, Parameter[] proxyInputParameters) {
+            for (Parameter proxyInputParameter : proxyInputParameters) {
+                if (parameterType == proxyInputParameter.getType()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private boolean isCustomObject(Parameter[] proxyInputParameters) {
             return proxyInputParameters.length == 1 && proxyInputParameters[0].getAnnotation(Param.class) == null;
         }
@@ -97,6 +137,8 @@ public abstract class RequestMetadataFactory {
             Map<Field, Field> fieldMapping = Utilities.serializationMappings(proxyInputArg, actualRequestType);
             return new CustomRequestWrapper(fieldMapping, converter, actualRequestType);
         }
+
+
 
         private RequestWrapper createForPlainObjects(Class<?> inputArg, Parameter[] proxyInputParameters) {
             Method[] inputMethods = inputArg.getDeclaredMethods();

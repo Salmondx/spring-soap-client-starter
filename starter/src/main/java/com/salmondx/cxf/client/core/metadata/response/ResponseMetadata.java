@@ -8,6 +8,10 @@ import java.util.Map;
 /**
  * Created by Salmondx on 05/09/16.
  */
+
+/**
+ * Converts original response object to the required type of proxy service
+ */
 public abstract class ResponseMetadata {
     TypeConverter converter;
     Class<?> proxyType;

@@ -7,7 +7,7 @@ with hystrix support and custom request/response serialization.
 Add several dependencies to your `build.gradle` file:
 ```groovy
 dependencies {
-    compile 'com.salmondx.cxf.client:starter:0.0.1'
+    compile 'com.salmondx.cxf.client:starter:0.0.2'
 }
 ```
 
@@ -126,6 +126,21 @@ If there is no `@Field` annotation with a property, serializator will compare th
 
 `WARNING`: Custom object should be a POJO with empty constructor and getters/setters.
 
+#### Pass original parameters
+It is possible to use raw parameters from soap interface. Just create a method with `SoapMethod` annotation that
+accepts original soap parameters:
+ 
+```java
+// AccountInfoGetInParms and BankInfo are original parameters from soap interface
+@SoapMethod(value = "AccountInfoGet")
+AccountInfoGetOutParms getAccountInfoRaw(AccountInfoGetInParms inParms, BankInfo bankInfo);
+```
+Also it is possible to autowire some of the parameters:
+```java
+@SoapMethod(value = "AccountInfoGet", autowired = {BankInfo.class})
+AccountInfoGetOutParms getAccountInfoRawWithAutowired(AccountInfoGetInParms inParms);
+```
+
 ### Response objects
 Available response types:
 ```java
@@ -211,6 +226,13 @@ public class CustomerAccountInfo {
     protected List<AccountInfo> resultSetRow;
 }
 ```
+#### Original response object
+It is possible to retrieve an original response object without a deserialization:
+```java
+@SoapMethod(value = "AccountInfoGet")
+AccountInfoGetOutParms getAsIs(AccountInfoGetInParms inParms, BankInfo bankInfo);
+```
+Other wrappers are also available for original response objects (`Observable<AccountInfoGetOutParms>`, `Single<AccountInfoGetOutParms>`, `HystrixCommand<AccountInfoGetOutParms>`).
 
 ### Hystrix support
 Each `@SoapMethod` is wrapped with HystrixCommand by default. `HystrixCommand` is created with `HystrixCommandGroupKey` that

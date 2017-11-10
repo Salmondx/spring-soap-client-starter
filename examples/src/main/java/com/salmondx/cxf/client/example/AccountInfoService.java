@@ -1,5 +1,7 @@
 package com.salmondx.cxf.client.example;
 
+import accountinfo.AccountInfoGetInParms;
+import accountinfo.AccountInfoGetOutParms;
 import accountinfo.AccountInfoPortType;
 import accountinfo.BankInfo;
 import com.salmondx.cxf.client.annotation.Param;
@@ -28,4 +30,13 @@ public interface AccountInfoService {
 
     @SoapMethod(value = "AccountInfoList", autowired = {BankInfo.class})
     Single<List<AccountInfoRow>> getInfoListSingle(@Param("currency") String currency);
+
+    @SoapMethod(value = "AccountInfoGet")
+    AccountInfoGetOutParms getAsIs(AccountInfoGetInParms inParms, BankInfo bankInfo);
+
+    @SoapMethod(value = "AccountInfoGet", autowired = {BankInfo.class})
+    AccountInfoGetOutParms getAsIsWithAutowired(AccountInfoGetInParms inParms);
+
+    @SoapMethod(value = "AccountInfoGet", autowired = {BankInfo.class})
+    Observable<AccountInfoGetOutParms> getAsIsAsync(AccountInfoGetInParms inParms);
 }

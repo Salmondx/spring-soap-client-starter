@@ -10,6 +10,10 @@ import java.lang.annotation.Target;
 /**
  * Created by Salmondx on 01/09/16.
  */
+
+/**
+ * Constructs a proxy service around original soap service
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SoapClient {

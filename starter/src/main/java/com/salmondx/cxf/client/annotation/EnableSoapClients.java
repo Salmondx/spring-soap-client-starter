@@ -11,6 +11,10 @@ import java.lang.annotation.Target;
 /**
  * Created by Salmondx on 01/09/16.
  */
+
+/**
+ * Bootstraps the process of creation of proxy services
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Import(SoapClientRegistrar.class)
